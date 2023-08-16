@@ -1,7 +1,9 @@
 package bl4ckscor3.mod.blindfetchrcompanion;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.systems.RenderSystem;
 
+import bl4ckscor3.mod.blindfetchrcompanion.mixin.KeyMappingAccessor;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
@@ -47,7 +49,9 @@ public class ItemChecklistScreen extends AbstractContainerScreen<ItemChecklistMe
 
 	@Override
 	public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-		if (BlindFetchrCompanionClient.openItemChecklistKey.matches(keyCode, scanCode) && BlindFetchrCompanionClient.openItemChecklistKey.isDown()) {
+		InputConstants.Key pressedKey = InputConstants.getKey(keyCode, scanCode);
+
+		if (pressedKey != InputConstants.UNKNOWN && pressedKey.equals(((KeyMappingAccessor) BlindFetchrCompanionClient.openItemChecklistKey).getKey())) {
 			onClose();
 			return true;
 		}

@@ -21,8 +21,7 @@ public class BlindFetchrCompanionClient implements ClientModInitializer {
 		ClientTickEvents.END_CLIENT_TICK.register(client -> {
 			if (cooldown > 0)
 				cooldown--;
-
-			if (openItemChecklistKey.consumeClick() && client.screen == null && cooldown <= 0) {
+			else if (client.screen == null && openItemChecklistKey.consumeClick()) {
 				ClientPlayNetworking.send(BlindFetchrCompanion.OPEN_MENU_MESSAGE, PacketByteBufs.create());
 				cooldown = COOLDOWN_LENGTH;
 			}
