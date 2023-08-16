@@ -14,3 +14,8 @@ A commpanion mod for [NeunEinser's Fetchr](https://github.com/NeunEinser/bingo/)
 - Simply click an item to mark it as checked. This will immediately synchronize to all players on the same team unless they have the checklist open as well.
 - To reset every team's checklist, run the command `/blindfetchrcompanion_reset`. This is only available to OPs.
 	- The checklists will also reset on datapack reload (`/reload`) and when the server first starts.
+
+### Troubleshooting
+
+- If a team that is in-game does not have any items show up in their checklist, an operator can run the command `/blindfetchrcompanion_reset <team>`, replacing `<team>` with the team whose checklist is empty. This will reset only that team's checklist, and should fix the issue.
+- Have a question, suggestion, or found a bug? Open an issue!

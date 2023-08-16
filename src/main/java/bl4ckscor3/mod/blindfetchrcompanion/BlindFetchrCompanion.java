@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
+import com.mojang.brigadier.builder.RequiredArgumentBuilder;
 
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
@@ -15,6 +16,7 @@ import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerType;
 import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.arguments.TeamArgument;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -67,7 +69,26 @@ public class BlindFetchrCompanion implements ModInitializer {
 		});
 		ServerLifecycleEvents.END_DATA_PACK_RELOAD.register((server, resourceManager, success) -> resetEveryonesItems(server));
 		ServerLifecycleEvents.SERVER_STARTED.register(BlindFetchrCompanion::resetEveryonesItems);
-		CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> dispatcher.register(LiteralArgumentBuilder.<CommandSourceStack>literal(String.format("%s_reset", MODID)).requires(css -> css.hasPermission(3)).executes(ctx -> resetEveryonesItems(ctx.getSource().getServer()))));
+		CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
+			//@formatter:off
+			dispatcher.register(LiteralArgumentBuilder.<CommandSourceStack>literal(String.format("%s_reset", MODID))
+					.requires(sourceStack -> sourceStack.hasPermission(3))
+					.executes(ctx -> {
+						resetEveryonesItems(ctx.getSource().getServer());
+						ctx.getSource().sendSuccess(() -> Component.translatable(String.format("%s.command.success", MODID)), false);
+						return 1;
+					})
+					.then(RequiredArgumentBuilder.<CommandSourceStack, String>argument("team", TeamArgument.team())
+							.executes(ctx -> {
+								//@formatter:on
+								String teamName = ctx.getArgument("team", String.class);
+								PlayerTeam team = TeamArgument.getTeam(ctx, teamName);
+
+								resetTeamItems(team);
+								ctx.getSource().sendSuccess(() -> Component.translatable(String.format("%s.command.team.success", MODID), teamName), false);
+								return 1;
+							})));
+		});
 	}
 
 	public static void writeItemStates(PlayerTeam team, FriendlyByteBuf buf) {
@@ -88,7 +109,7 @@ public class BlindFetchrCompanion implements ModInitializer {
 		return itemStates;
 	}
 
-	private static int resetEveryonesItems(MinecraftServer server) {
+	private static void resetEveryonesItems(MinecraftServer server) {
 		RegistryAccess registryAccess = server.registryAccess();
 
 		if (FETCHR_ITEMS.isEmpty())
@@ -96,7 +117,6 @@ public class BlindFetchrCompanion implements ModInitializer {
 
 		ITEM_STATES.clear();
 		server.getScoreboard().getPlayerTeams().forEach(BlindFetchrCompanion::resetTeamItems);
-		return 1;
 	}
 
 	private static void resetTeamItems(PlayerTeam team) {
