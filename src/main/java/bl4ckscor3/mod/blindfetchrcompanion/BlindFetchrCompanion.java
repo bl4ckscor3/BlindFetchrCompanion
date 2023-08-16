@@ -67,7 +67,7 @@ public class BlindFetchrCompanion implements ModInitializer {
 		});
 		ServerLifecycleEvents.END_DATA_PACK_RELOAD.register((server, resourceManager, success) -> resetEveryonesItems(server));
 		ServerLifecycleEvents.SERVER_STARTED.register(BlindFetchrCompanion::resetEveryonesItems);
-		CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> dispatcher.register(LiteralArgumentBuilder.<CommandSourceStack>literal(String.format("%s_reset", MODID)).executes(ctx -> resetEveryonesItems(ctx.getSource().getServer()))));
+		CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> dispatcher.register(LiteralArgumentBuilder.<CommandSourceStack>literal(String.format("%s_reset", MODID)).requires(css -> css.hasPermission(3)).executes(ctx -> resetEveryonesItems(ctx.getSource().getServer()))));
 	}
 
 	public static void writeItemStates(PlayerTeam team, FriendlyByteBuf buf) {
