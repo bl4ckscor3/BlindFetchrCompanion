@@ -1,0 +1,32 @@
+{
+	"schemaVersion": 1,
+	"id": "blindfetchrcompanion",
+	"version": "${version}",
+	"name": "\"Blind Fetchr\"-Companion",
+	"description": "A commpanion mod for NeunEinser's Fetchr, adding a UI for use in blind mode to keep track which items were already tried. With team synchronization support.",
+	"authors": [
+		"bl4ckscor3"
+	],
+	"contact": {
+		"homepage": "https://github.com/bl4ckscor3/BlindFetchrCompanion",
+		"issues": "https://github.com/bl4ckscor3/BlindFetchrCompanion/issues",
+		"sources": "https://github.com/bl4ckscor3/BlindFetchrCompanion"
+	},
+	"license": "MIT",
+	"icon": "assets/blindfetchrcompanion/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"bl4ckscor3.mod.blindfetchrcompanion.BlindFetchrCompanion"
+		],
+		"client": [
+			"bl4ckscor3.mod.blindfetchrcompanion.BlindFetchrCompanionClient"
+		]
+	},
+	"depends": {
+		"fabricloader": ">=0.14.21",
+		"minecraft": "~1.20.1",
+		"java": ">=17",
+		"fabric-api": "*"
+	}
+}
