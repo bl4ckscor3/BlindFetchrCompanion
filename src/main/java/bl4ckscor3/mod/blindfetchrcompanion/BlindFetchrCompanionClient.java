@@ -8,7 +8,10 @@ import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.minecraft.client.KeyMapping;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.MenuScreens;
+import net.minecraft.client.resources.sounds.SimpleSoundInstance;
+import net.minecraft.sounds.SoundEvents;
 
 public class BlindFetchrCompanionClient implements ClientModInitializer {
 	private static final int COOLDOWN_LENGTH = 60;
@@ -27,5 +30,9 @@ public class BlindFetchrCompanionClient implements ClientModInitializer {
 			}
 		});
 		MenuScreens.register(BlindFetchrCompanion.CHECKLIST_MENU_TYPE, ItemChecklistScreen::new);
+	}
+
+	public static void playSound(boolean checked) {
+		Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(checked ? SoundEvents.WOODEN_PRESSURE_PLATE_CLICK_ON : SoundEvents.WOODEN_PRESSURE_PLATE_CLICK_OFF, 1.0F, 1.0F));
 	}
 }

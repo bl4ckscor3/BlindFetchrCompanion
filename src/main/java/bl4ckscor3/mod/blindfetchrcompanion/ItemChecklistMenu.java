@@ -37,6 +37,9 @@ public class ItemChecklistMenu extends AbstractContainerMenu {
 			ItemState state = itemStates.get(slot);
 
 			state.setChecked(!state.isChecked());
+
+			if (player.level().isClientSide)
+				BlindFetchrCompanionClient.playSound(state.isChecked());
 		}
 	}
 
