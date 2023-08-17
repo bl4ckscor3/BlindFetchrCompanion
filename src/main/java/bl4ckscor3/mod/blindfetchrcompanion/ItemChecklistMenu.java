@@ -44,6 +44,14 @@ public class ItemChecklistMenu extends AbstractContainerMenu {
 	}
 
 	@Override
+	public void removed(Player player) {
+		super.removed(player);
+
+		if (!player.level().isClientSide)
+			BlindFetchrCompanion.setItemChecklistsDirty();
+	}
+
+	@Override
 	public ItemStack quickMoveStack(Player player, int index) {
 		return ItemStack.EMPTY;
 	}

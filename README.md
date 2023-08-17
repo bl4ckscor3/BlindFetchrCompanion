@@ -12,8 +12,9 @@ A companion mod for [NeunEinser's Fetchr](https://github.com/NeunEinser/bingo/),
 - The item checklist will only show up for players who are part of a team. If a player is not playing the game (aka they're not in a team), the checklist will be empty.
 - To open the item checklist, press `C` by default. This can be changed in the key binds settings.
 - Simply click an item to mark it as checked. This will immediately synchronize to all players on the same team unless they have the checklist open as well.
-- To reset every team's checklist, run the command `/blindfetchrcompanion_reset`. This is only available to OPs.
-	- The checklists will also reset on datapack reload (`/reload`) and when the server first starts.
+- After the game is over, the checklists need to be manually reset before the next game starts. To reset every team's checklist, run the command `/blindfetchrcompanion_reset`. This is only available to OPs.
+	- The checklists will also reset on datapack reload (`/reload`).
+- If the singleplayer world/multiplayer server is shut down at any point during or after the game, all teams' checklists will be preserved.
 
 ### Troubleshooting
 

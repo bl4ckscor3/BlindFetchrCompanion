@@ -3,9 +3,7 @@ package bl4ckscor3.mod.blindfetchrcompanion;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.builder.RequiredArgumentBuilder;
@@ -44,7 +42,7 @@ public class BlindFetchrCompanion implements ModInitializer {
 	public static final ExtendedScreenHandlerType<ItemChecklistMenu> CHECKLIST_MENU_TYPE = Registry.register(BuiltInRegistries.MENU, new ResourceLocation(MODID, "checklist"), new ExtendedScreenHandlerType<>((id, inv, buf) -> new ItemChecklistMenu(id, readItemStates(buf))));
 	public static final ResourceLocation OPEN_MENU_MESSAGE = new ResourceLocation(BlindFetchrCompanion.MODID, "open_menu");
 	private static final List<ItemStack> FETCHR_ITEMS = new ArrayList<>();
-	private static final Map<PlayerTeam, List<ItemState>> ITEM_CHECKLISTS = new HashMap<>();
+	private static ChecklistsSavedData itemChecklists;
 
 	@Override
 	public void onInitialize() {
@@ -58,7 +56,7 @@ public class BlindFetchrCompanion implements ModInitializer {
 
 					@Override
 					public AbstractContainerMenu createMenu(int id, Inventory inventory, Player player) {
-						return new ItemChecklistMenu(id, ITEM_CHECKLISTS.getOrDefault(player.getScoreboard().getPlayersTeam(player.getName().getString()), new ArrayList<>()));
+						return new ItemChecklistMenu(id, itemChecklists.getOrDefault(player.getScoreboard().getPlayersTeam(player.getName().getString())));
 					}
 
 					@Override
@@ -68,14 +66,15 @@ public class BlindFetchrCompanion implements ModInitializer {
 				});
 			}
 		});
-		ServerLifecycleEvents.END_DATA_PACK_RELOAD.register((server, resourceManager, success) -> resetEveryonesItems(server));
-		ServerLifecycleEvents.SERVER_STARTED.register(BlindFetchrCompanion::resetEveryonesItems);
+		ServerLifecycleEvents.END_DATA_PACK_RELOAD.register((server, resourceManager, success) -> resetAllChecklists(server));
+		ServerLifecycleEvents.SERVER_STARTED.register(BlindFetchrCompanion::loadChecklists);
+		ServerLifecycleEvents.SERVER_STOPPING.register(BlindFetchrCompanion::saveChecklists);
 		CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
 			//@formatter:off
 			dispatcher.register(LiteralArgumentBuilder.<CommandSourceStack>literal(String.format("%s_reset", MODID))
 					.requires(sourceStack -> sourceStack.hasPermission(3))
 					.executes(ctx -> {
-						resetEveryonesItems(ctx.getSource().getServer());
+						resetAllChecklists(ctx.getSource().getServer());
 						ctx.getSource().sendSuccess(() -> Component.translatable(String.format("%s.command.success", MODID)), false);
 						return 1;
 					})
@@ -85,15 +84,31 @@ public class BlindFetchrCompanion implements ModInitializer {
 								String teamName = ctx.getArgument("team", String.class);
 								PlayerTeam team = TeamArgument.getTeam(ctx, teamName);
 
-								resetTeamItems(team);
+								resetTeamChecklist(team);
 								ctx.getSource().sendSuccess(() -> Component.translatable(String.format("%s.command.team.success", MODID), teamName), false);
 								return 1;
 							})));
 		});
 	}
 
+	public static void loadChecklists(MinecraftServer server) {
+		itemChecklists = server.overworld().getDataStorage().computeIfAbsent(tag -> ChecklistsSavedData.load(server, tag), ChecklistsSavedData::new, MODID);
+
+		if (itemChecklists.isFirstLoad())
+			resetAllChecklists(server);
+	}
+
+	public static void saveChecklists(MinecraftServer server) {
+		server.overworld().getDataStorage().set(MODID, itemChecklists);
+		setItemChecklistsDirty();
+	}
+
+	public static void setItemChecklistsDirty() {
+		itemChecklists.setDirty();
+	}
+
 	public static void writeItemStates(PlayerTeam team, FriendlyByteBuf buf) {
-		List<ItemState> itemStates = ITEM_CHECKLISTS.getOrDefault(team, new ArrayList<>());
+		List<ItemState> itemStates = itemChecklists.getOrDefault(team);
 
 		buf.writeVarInt(itemStates.size());
 		itemStates.forEach(state -> state.write(buf));
@@ -110,21 +125,21 @@ public class BlindFetchrCompanion implements ModInitializer {
 		return itemStates;
 	}
 
-	private static void resetEveryonesItems(MinecraftServer server) {
+	private static void resetAllChecklists(MinecraftServer server) {
 		RegistryAccess registryAccess = server.registryAccess();
 
 		if (FETCHR_ITEMS.isEmpty())
 			populateFetchrItems(registryAccess);
 
-		ITEM_CHECKLISTS.clear();
-		server.getScoreboard().getPlayerTeams().forEach(BlindFetchrCompanion::resetTeamItems);
+		itemChecklists.clear();
+		server.getScoreboard().getPlayerTeams().forEach(BlindFetchrCompanion::resetTeamChecklist);
 	}
 
-	private static void resetTeamItems(PlayerTeam team) {
+	private static void resetTeamChecklist(PlayerTeam team) {
 		List<ItemState> itemStates = new ArrayList<>();
 
 		FETCHR_ITEMS.forEach(stack -> itemStates.add(new ItemState(stack, false)));
-		ITEM_CHECKLISTS.put(team, itemStates);
+		itemChecklists.put(team, itemStates);
 	}
 
 	private static void populateFetchrItems(RegistryAccess registryAccess) {

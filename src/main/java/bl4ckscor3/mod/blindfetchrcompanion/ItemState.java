@@ -1,5 +1,6 @@
 package bl4ckscor3.mod.blindfetchrcompanion;
 
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.item.ItemStack;
 
@@ -22,6 +23,16 @@ public final class ItemState {
 
 	public void setChecked(boolean checked) {
 		this.checked = checked;
+	}
+
+	public CompoundTag save(CompoundTag tag) {
+		tag.put("stack", stack.save(new CompoundTag()));
+		tag.putBoolean("checked", checked);
+		return tag;
+	}
+
+	public static ItemState load(CompoundTag tag) {
+		return new ItemState(ItemStack.of(tag.getCompound("stack")), tag.getBoolean("checked"));
 	}
 
 	public void write(FriendlyByteBuf buf) {
