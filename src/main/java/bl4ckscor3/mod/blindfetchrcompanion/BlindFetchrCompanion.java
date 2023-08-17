@@ -251,7 +251,7 @@ public class BlindFetchrCompanion implements ModInitializer {
 				new ItemStack(Items.PURPLE_DYE),
 				new ItemStack(Items.RABBIT_HIDE),
 				new ItemStack(Items.RAIL),
-				new ItemStack(Items.RAW_COPPER),
+				new ItemStack(Items.RAW_COPPER_BLOCK),
 				new ItemStack(Items.RAW_GOLD_BLOCK),
 				new ItemStack(Items.RAW_IRON_BLOCK),
 				new ItemStack(Items.REDSTONE_BLOCK),
