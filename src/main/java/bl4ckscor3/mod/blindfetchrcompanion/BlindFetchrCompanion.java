@@ -2,6 +2,7 @@ package bl4ckscor3.mod.blindfetchrcompanion;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -283,5 +284,6 @@ public class BlindFetchrCompanion implements ModInitializer {
 				new ItemStack(Items.VINE),
 				new ItemStack(Items.WRITABLE_BOOK)));
 		//@formatter:on
+		Collections.sort(FETCHR_ITEMS, (stack1, stack2) -> stack1.getDisplayName().getString().compareTo(stack2.getDisplayName().getString()));
 	}
 }
