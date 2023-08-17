@@ -43,8 +43,8 @@ public class BlindFetchrCompanion implements ModInitializer {
 	public static final String MODID = "blindfetchrcompanion";
 	public static final ExtendedScreenHandlerType<ItemChecklistMenu> CHECKLIST_MENU_TYPE = Registry.register(BuiltInRegistries.MENU, new ResourceLocation(MODID, "checklist"), new ExtendedScreenHandlerType<>((id, inv, buf) -> new ItemChecklistMenu(id, readItemStates(buf))));
 	public static final ResourceLocation OPEN_MENU_MESSAGE = new ResourceLocation(BlindFetchrCompanion.MODID, "open_menu");
-	private static final Map<PlayerTeam, List<ItemState>> ITEM_STATES = new HashMap<>();
 	private static final List<ItemStack> FETCHR_ITEMS = new ArrayList<>();
+	private static final Map<PlayerTeam, List<ItemState>> ITEM_CHECKLISTS = new HashMap<>();
 
 	@Override
 	public void onInitialize() {
@@ -58,7 +58,7 @@ public class BlindFetchrCompanion implements ModInitializer {
 
 					@Override
 					public AbstractContainerMenu createMenu(int id, Inventory inventory, Player player) {
-						return new ItemChecklistMenu(id, ITEM_STATES.getOrDefault(player.getScoreboard().getPlayersTeam(player.getName().getString()), new ArrayList<>()));
+						return new ItemChecklistMenu(id, ITEM_CHECKLISTS.getOrDefault(player.getScoreboard().getPlayersTeam(player.getName().getString()), new ArrayList<>()));
 					}
 
 					@Override
@@ -93,7 +93,7 @@ public class BlindFetchrCompanion implements ModInitializer {
 	}
 
 	public static void writeItemStates(PlayerTeam team, FriendlyByteBuf buf) {
-		List<ItemState> itemStates = ITEM_STATES.getOrDefault(team, new ArrayList<>());
+		List<ItemState> itemStates = ITEM_CHECKLISTS.getOrDefault(team, new ArrayList<>());
 
 		buf.writeVarInt(itemStates.size());
 		itemStates.forEach(state -> state.write(buf));
@@ -116,7 +116,7 @@ public class BlindFetchrCompanion implements ModInitializer {
 		if (FETCHR_ITEMS.isEmpty())
 			populateFetchrItems(registryAccess);
 
-		ITEM_STATES.clear();
+		ITEM_CHECKLISTS.clear();
 		server.getScoreboard().getPlayerTeams().forEach(BlindFetchrCompanion::resetTeamItems);
 	}
 
@@ -124,7 +124,7 @@ public class BlindFetchrCompanion implements ModInitializer {
 		List<ItemState> itemStates = new ArrayList<>();
 
 		FETCHR_ITEMS.forEach(stack -> itemStates.add(new ItemState(stack, false)));
-		ITEM_STATES.put(team, itemStates);
+		ITEM_CHECKLISTS.put(team, itemStates);
 	}
 
 	private static void populateFetchrItems(RegistryAccess registryAccess) {
