@@ -81,11 +81,10 @@ public class BlindFetchrCompanion implements ModInitializer {
 					.then(RequiredArgumentBuilder.<CommandSourceStack, String>argument("team", TeamArgument.team())
 							.executes(ctx -> {
 								//@formatter:on
-								String teamName = ctx.getArgument("team", String.class);
-								PlayerTeam team = TeamArgument.getTeam(ctx, teamName);
+								PlayerTeam team = TeamArgument.getTeam(ctx, "team");
 
 								resetTeamChecklist(team);
-								ctx.getSource().sendSuccess(() -> Component.translatable(String.format("%s.command.team.success", MODID), teamName), true);
+								ctx.getSource().sendSuccess(() -> Component.translatable(String.format("%s.command.team.success", MODID), team.getName()), true);
 								return 1;
 							})));
 		});
