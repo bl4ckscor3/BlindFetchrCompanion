@@ -3,7 +3,7 @@
 	"id": "blindfetchrcompanion",
 	"version": "${version}",
 	"name": "\"Blind Fetchr\"-Companion",
-	"description": "A commpanion mod for NeunEinser's Fetchr, adding a UI for use in blind mode to keep track which items were already tried. With team synchronization support.",
+	"description": "A companion mod for NeunEinser's Fetchr, adding a UI for use in blind mode to keep track which items were already tried. With team synchronization support.",
 	"authors": [
 		"bl4ckscor3"
 	],
