@@ -20,7 +20,7 @@ public class BlindFetchrCompanionClient implements ClientModInitializer {
 
 	@Override
 	public void onInitializeClient() {
-		openItemChecklistKey = KeyBindingHelper.registerKeyBinding(new KeyMapping(String.format("key.%s.open_item_checklist", BlindFetchrCompanion.MODID), GLFW.GLFW_KEY_C, KeyMapping.CATEGORY_MISC));
+		openItemChecklistKey = KeyBindingHelper.registerKeyBinding(new KeyMapping(String.format("key.%s.open_item_checklist", BlindFetchrCompanion.MODID), GLFW.GLFW_KEY_V, KeyMapping.CATEGORY_MISC));
 		ClientTickEvents.END_CLIENT_TICK.register(client -> {
 			if (cooldown > 0)
 				cooldown--;
