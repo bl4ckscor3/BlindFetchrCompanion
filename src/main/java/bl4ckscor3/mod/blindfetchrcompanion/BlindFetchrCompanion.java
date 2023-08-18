@@ -191,6 +191,7 @@ public class BlindFetchrCompanion implements ModInitializer {
 				new ItemStack(Items.DETECTOR_RAIL),
 				new ItemStack(Items.DIAMOND_AXE),
 				new ItemStack(Items.DIAMOND_HOE),
+				new ItemStack(Items.DIAMOND_PICKAXE),
 				new ItemStack(Items.DIAMOND_SHOVEL),
 				new ItemStack(Items.DIAMOND_SWORD),
 				new ItemStack(Items.DISPENSER),
