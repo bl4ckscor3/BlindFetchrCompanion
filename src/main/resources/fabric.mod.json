@@ -21,6 +21,9 @@
 		],
 		"client": [
 			"bl4ckscor3.mod.blindfetchrcompanion.BlindFetchrCompanionClient"
+		],
+		"modmenu": [
+			"bl4ckscor3.mod.blindfetchrcompanion.ModMenuIntegration"
 		]
 	},
 	"mixins": [
@@ -30,6 +33,10 @@
 		"fabricloader": ">=0.14.21",
 		"minecraft": "~1.20.1",
 		"java": ">=17",
-		"fabric-api": "*"
+		"fabric-api": "*",
+		"cloth-config": "*"
+	},
+	"suggests": {
+		"modmenu": "*"
 	}
 }

@@ -8,6 +8,8 @@ import java.util.List;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.builder.RequiredArgumentBuilder;
 
+import me.shedaniel.autoconfig.AutoConfig;
+import me.shedaniel.autoconfig.serializer.JanksonConfigSerializer;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
@@ -43,9 +45,12 @@ public class BlindFetchrCompanion implements ModInitializer {
 	public static final ResourceLocation OPEN_MENU_MESSAGE = new ResourceLocation(BlindFetchrCompanion.MODID, "open_menu");
 	private static final List<ItemStack> FETCHR_ITEMS = new ArrayList<>();
 	private static ChecklistsSavedData itemChecklists;
+	private static BlindFetchrCompanionConfig config;
 
 	@Override
 	public void onInitialize() {
+		AutoConfig.register(BlindFetchrCompanionConfig.class, JanksonConfigSerializer::new);
+		config = AutoConfig.getConfigHolder(BlindFetchrCompanionConfig.class).getConfig();
 		ServerPlayNetworking.registerGlobalReceiver(OPEN_MENU_MESSAGE, (server, player, handler, buf, responseSender) -> {
 			if (!player.hasContainerOpen()) {
 				player.openMenu(new ExtendedScreenHandlerFactory() {
@@ -308,5 +313,9 @@ public class BlindFetchrCompanion implements ModInitializer {
 		catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+
+	public static BlindFetchrCompanionConfig getConfig() {
+		return config;
 	}
 }

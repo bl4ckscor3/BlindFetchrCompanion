@@ -3,6 +3,7 @@ package bl4ckscor3.mod.blindfetchrcompanion;
 import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.systems.RenderSystem;
 
+import bl4ckscor3.mod.blindfetchrcompanion.BlindFetchrCompanionConfig.CheckedItemDisplayType;
 import bl4ckscor3.mod.blindfetchrcompanion.mixin.KeyMappingAccessor;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -36,11 +37,16 @@ public class ItemChecklistScreen extends AbstractContainerScreen<ItemChecklistMe
 			if (slot.index < menu.itemStates.size() && menu.itemStates.get(slot.index).isChecked()) {
 				int x = leftPos + slot.x;
 				int y = topPos + slot.y;
+				CheckedItemDisplayType displayType = BlindFetchrCompanion.getConfig().checkedItemDisplayType;
 
-				guiGraphics.fill(x, y, x + 16, y + 16, 0x80000000);
-				RenderSystem.disableDepthTest();
-				guiGraphics.blit(BEACON_GUI, x - 2, y - 3, 88, 219, 21, 22, 256, 256);
-				RenderSystem.enableDepthTest();
+				if (displayType.darkens())
+					guiGraphics.fill(x, y, x + 16, y + 16, 0x80000000);
+
+				if (displayType.showsCheckmark()) {
+					RenderSystem.disableDepthTest();
+					guiGraphics.blit(BEACON_GUI, x - 2, y - 3, 88, 219, 21, 22, 256, 256);
+					RenderSystem.enableDepthTest();
+				}
 			}
 		}
 
