@@ -142,12 +142,13 @@ public class BlindFetchrCompanion implements ModInitializer {
 	}
 
 	private static void populateFetchrItems(RegistryAccess registryAccess) {
-		ItemStack leatherBoots = new ItemStack(Items.LEATHER_BOOTS);
-		ItemStack tippedArrow = new ItemStack(Items.TIPPED_ARROW);
+		try {
+			ItemStack leatherBoots = new ItemStack(Items.LEATHER_BOOTS);
+			ItemStack tippedArrow = new ItemStack(Items.TIPPED_ARROW);
 
-		ArmorTrim.setTrim(registryAccess, leatherBoots, new ArmorTrim(registryAccess.lookup(Registries.TRIM_MATERIAL).get().get(TrimMaterials.LAPIS).get(), registryAccess.lookup(Registries.TRIM_PATTERN).get().get(TrimPatterns.COAST).get()));
-		PotionUtils.setPotion(tippedArrow, Potions.SLOWNESS);
-		FETCHR_ITEMS.addAll(Arrays.asList(
+			ArmorTrim.setTrim(registryAccess, leatherBoots, new ArmorTrim(registryAccess.lookup(Registries.TRIM_MATERIAL).get().get(TrimMaterials.LAPIS).get(), registryAccess.lookup(Registries.TRIM_PATTERN).get().get(TrimPatterns.SHAPER).get()));
+			PotionUtils.setPotion(tippedArrow, Potions.SLOWNESS);
+			FETCHR_ITEMS.addAll(Arrays.asList(
 		//@formatter:off
 				new ItemStack(Items.ACACIA_HANGING_SIGN),
 				new ItemStack(Items.ACACIA_SAPLING),
@@ -158,6 +159,7 @@ public class BlindFetchrCompanion implements ModInitializer {
 				new ItemStack(Items.ARROW),
 				new ItemStack(Items.AXOLOTL_BUCKET),
 				new ItemStack(Items.BAMBOO),
+				new ItemStack(Items.BIG_DRIPLEAF),
 				new ItemStack(Items.BIRCH_SAPLING),
 				new ItemStack(Items.BLAST_FURNACE),
 				new ItemStack(Items.BONE),
@@ -194,6 +196,7 @@ public class BlindFetchrCompanion implements ModInitializer {
 				new ItemStack(Items.DIAMOND_SHOVEL),
 				new ItemStack(Items.DIAMOND_SWORD),
 				new ItemStack(Items.DISPENSER),
+				new ItemStack(Items.DRIED_KELP),
 				new ItemStack(Items.DRIED_KELP_BLOCK),
 				new ItemStack(Items.DRIPSTONE_BLOCK),
 				new ItemStack(Items.EGG),
@@ -294,11 +297,16 @@ public class BlindFetchrCompanion implements ModInitializer {
 				tippedArrow,
 				new ItemStack(Items.TNT),
 				new ItemStack(Items.TNT_MINECART),
+				new ItemStack(Items.TUFF),
 				new ItemStack(Items.TROPICAL_FISH),
 				new ItemStack(Items.TROPICAL_FISH_BUCKET),
 				new ItemStack(Items.VINE),
 				new ItemStack(Items.WRITABLE_BOOK)));
 		//@formatter:on
-		Collections.sort(FETCHR_ITEMS, (stack1, stack2) -> stack1.getDisplayName().getString().compareTo(stack2.getDisplayName().getString()));
+			Collections.sort(FETCHR_ITEMS, (stack1, stack2) -> stack1.getDisplayName().getString().compareTo(stack2.getDisplayName().getString()));
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 }
