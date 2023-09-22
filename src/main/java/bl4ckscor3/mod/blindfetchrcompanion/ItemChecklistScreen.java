@@ -25,7 +25,7 @@ public class ItemChecklistScreen extends AbstractContainerScreen<ItemChecklistMe
 
 	@Override
 	protected void renderBg(GuiGraphics guiGraphics, float partialTick, int mouseX, int mouseY) {
-		renderBackground(guiGraphics);
+		renderTransparentBackground(guiGraphics);
 		guiGraphics.blit(TEXTURE, leftPos, topPos, 0, 0, imageWidth, imageHeight);
 	}
 

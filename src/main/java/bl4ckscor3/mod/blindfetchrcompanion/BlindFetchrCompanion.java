@@ -27,6 +27,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.datafix.DataFixTypes;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -37,6 +38,7 @@ import net.minecraft.world.item.alchemy.Potions;
 import net.minecraft.world.item.armortrim.ArmorTrim;
 import net.minecraft.world.item.armortrim.TrimMaterials;
 import net.minecraft.world.item.armortrim.TrimPatterns;
+import net.minecraft.world.level.saveddata.SavedData;
 import net.minecraft.world.scores.PlayerTeam;
 
 public class BlindFetchrCompanion implements ModInitializer {
@@ -96,7 +98,7 @@ public class BlindFetchrCompanion implements ModInitializer {
 	}
 
 	public static void loadChecklists(MinecraftServer server) {
-		itemChecklists = server.overworld().getDataStorage().computeIfAbsent(tag -> ChecklistsSavedData.load(server, tag), ChecklistsSavedData::new, MODID);
+		itemChecklists = server.overworld().getDataStorage().computeIfAbsent(new SavedData.Factory<>(ChecklistsSavedData::new, tag -> ChecklistsSavedData.load(server, tag), DataFixTypes.LEVEL), MODID);
 
 		if (itemChecklists.isFirstLoad())
 			resetAllChecklists(server);
