@@ -6,7 +6,9 @@ import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.dedicated.DedicatedServer;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.players.PlayerList;
 import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Player;
@@ -14,6 +16,7 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.scores.Team;
 
 public class ItemChecklistMenu extends AbstractContainerMenu {
@@ -42,17 +45,19 @@ public class ItemChecklistMenu extends AbstractContainerMenu {
 		if (clickType == ClickType.PICKUP && slot >= 0 && slot < itemStates.size()) {
 			ItemState state = itemStates.get(slot);
 			boolean shouldBeChecked = !state.isChecked();
+			Level level = player.level();
 
 			state.setChecked(shouldBeChecked);
 
-			if (player.level().isClientSide)
+			if (level.isClientSide)
 				BlindFetchrCompanionClient.playSound(state.isChecked());
-			else {
+			else if (level.getServer() instanceof DedicatedServer server) {
 				String name = player.getName().getString();
 				Team team = player.getScoreboard().getPlayersTeam(name);
+				PlayerList playerList = server.getPlayerList();
 
 				for (String teamMemberName : team.getPlayers()) {
-					ServerPlayer teamMember = player.level().getServer().getPlayerList().getPlayerByName(teamMemberName);
+					ServerPlayer teamMember = playerList.getPlayerByName(teamMemberName);
 
 					if (teamMember != null) {
 						teamMember.sendSystemMessage(Component.translatable("%s %s [%s]", team.getColor() + name + ChatFormatting.RESET, shouldBeChecked ? "checked off" : "unchecked", Component.translatable(state.getStack().getDescriptionId())));
