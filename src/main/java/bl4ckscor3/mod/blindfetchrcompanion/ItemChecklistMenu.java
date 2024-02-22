@@ -2,6 +2,8 @@ package bl4ckscor3.mod.blindfetchrcompanion;
 
 import java.util.List;
 
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Player;
@@ -9,6 +11,7 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.scores.Team;
 
 public class ItemChecklistMenu extends AbstractContainerMenu {
 	public static final int NUM_COLUMNS = 13;
@@ -40,6 +43,17 @@ public class ItemChecklistMenu extends AbstractContainerMenu {
 
 			if (player.level().isClientSide)
 				BlindFetchrCompanionClient.playSound(state.isChecked());
+			else {
+				String name = player.getName().getString();
+				Team team = player.getScoreboard().getPlayersTeam(name);
+
+				for (String teamMemberName : team.getPlayers()) {
+					Player teamMember = player.level().getServer().getPlayerList().getPlayerByName(teamMemberName);
+
+					if (teamMember != null)
+						teamMember.sendSystemMessage(Component.translatable("%s %s [%s]", team.getColor() + name + ChatFormatting.RESET, state.isChecked() ? "checked off" : "unchecked", Component.translatable(state.getStack().getDescriptionId())));
+				}
+			}
 		}
 	}
 
