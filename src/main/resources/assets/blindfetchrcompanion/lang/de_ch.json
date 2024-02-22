@@ -1,7 +1,9 @@
 {
     "blindfetchrcompanion.command.success": "Die Item-Checkliste von jedem Team wurde erfolgreich zurückgesetzt!",
     "blindfetchrcompanion.command.team.success": "Die Item-Checkliste von Team \"%s\" wurde erfolgreich zurückgesetzt!",
+    "blindfetchrcompanion.item_checked": "+ %s hat [%s] abgehakt.",
     "blindfetchrcompanion.item_checklist": "Item-Checkliste",
+    "blindfetchrcompanion.item_unchecked": "- %s hat [%s] zurückgesetzt.",
     "key.blindfetchrcompanion.open_item_checklist": "Item-Checkliste öffnen",
     "text.autoconfig.blind-fetchr-companion.option.checkedItemDisplayType": "Darstellungsweise von überprüften Items"
 }
