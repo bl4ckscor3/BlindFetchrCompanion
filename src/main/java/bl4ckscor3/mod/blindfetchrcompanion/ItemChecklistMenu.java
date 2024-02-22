@@ -56,7 +56,9 @@ public class ItemChecklistMenu extends AbstractContainerMenu {
 
 					if (teamMember != null) {
 						teamMember.sendSystemMessage(Component.translatable("%s %s [%s]", team.getColor() + name + ChatFormatting.RESET, shouldBeChecked ? "checked off" : "unchecked", Component.translatable(state.getStack().getDescriptionId())));
-						ServerPlayNetworking.send(teamMember, BlindFetchrCompanion.UPDATE_ITEM_STATE, PacketByteBufs.create().writeVarInt(slot).writeBoolean(shouldBeChecked));
+
+						if (teamMember != player)
+							ServerPlayNetworking.send(teamMember, BlindFetchrCompanion.UPDATE_ITEM_STATE, PacketByteBufs.create().writeVarInt(slot).writeBoolean(shouldBeChecked));
 					}
 				}
 			}
