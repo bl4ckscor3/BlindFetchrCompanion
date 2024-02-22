@@ -1,6 +1,7 @@
 {
-    "blindfetchrcompanion.item_checklist": "Item Checklist",
     "blindfetchrcompanion.command.success": "Successfully reset every team's item checklist!",
     "blindfetchrcompanion.command.team.success": "Successfully reset the item checklist of \"%s\"!",
-    "key.blindfetchrcompanion.open_item_checklist": "Open Item Checklist"
+    "blindfetchrcompanion.item_checklist": "Item Checklist",
+    "key.blindfetchrcompanion.open_item_checklist": "Open Item Checklist",
+    "text.autoconfig.blind-fetchr-companion.option.checkedItemDisplayType": "Display type of checked items"
 }
