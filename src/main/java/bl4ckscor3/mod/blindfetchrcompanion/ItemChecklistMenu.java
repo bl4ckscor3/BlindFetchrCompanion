@@ -2,8 +2,11 @@ package bl4ckscor3.mod.blindfetchrcompanion;
 
 import java.util.List;
 
+import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Player;
@@ -38,8 +41,9 @@ public class ItemChecklistMenu extends AbstractContainerMenu {
 	public void clicked(int slot, int mouseButton, ClickType clickType, Player player) {
 		if (clickType == ClickType.PICKUP && slot >= 0 && slot < itemStates.size()) {
 			ItemState state = itemStates.get(slot);
+			boolean shouldBeChecked = !state.isChecked();
 
-			state.setChecked(!state.isChecked());
+			state.setChecked(shouldBeChecked);
 
 			if (player.level().isClientSide)
 				BlindFetchrCompanionClient.playSound(state.isChecked());
@@ -48,13 +52,20 @@ public class ItemChecklistMenu extends AbstractContainerMenu {
 				Team team = player.getScoreboard().getPlayersTeam(name);
 
 				for (String teamMemberName : team.getPlayers()) {
-					Player teamMember = player.level().getServer().getPlayerList().getPlayerByName(teamMemberName);
+					ServerPlayer teamMember = player.level().getServer().getPlayerList().getPlayerByName(teamMemberName);
 
-					if (teamMember != null)
-						teamMember.sendSystemMessage(Component.translatable("%s %s [%s]", team.getColor() + name + ChatFormatting.RESET, state.isChecked() ? "checked off" : "unchecked", Component.translatable(state.getStack().getDescriptionId())));
+					if (teamMember != null) {
+						teamMember.sendSystemMessage(Component.translatable("%s %s [%s]", team.getColor() + name + ChatFormatting.RESET, shouldBeChecked ? "checked off" : "unchecked", Component.translatable(state.getStack().getDescriptionId())));
+						ServerPlayNetworking.send(teamMember, BlindFetchrCompanion.UPDATE_ITEM_STATE, PacketByteBufs.create().writeVarInt(slot).writeBoolean(shouldBeChecked));
+					}
 				}
 			}
 		}
+	}
+
+	public void updateState(int slot, boolean newState) {
+		if (slot >= 0 && slot < itemStates.size())
+			itemStates.get(slot).setChecked(newState);
 	}
 
 	@Override

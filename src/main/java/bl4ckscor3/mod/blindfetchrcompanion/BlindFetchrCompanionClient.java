@@ -29,6 +29,10 @@ public class BlindFetchrCompanionClient implements ClientModInitializer {
 				cooldown = COOLDOWN_LENGTH;
 			}
 		});
+		ClientPlayNetworking.registerGlobalReceiver(BlindFetchrCompanion.UPDATE_ITEM_STATE, (client, handler, buf, responseSender) -> {
+			if (client.player.containerMenu instanceof ItemChecklistMenu menu)
+				menu.updateState(buf.readVarInt(), buf.readBoolean());
+		});
 		MenuScreens.register(BlindFetchrCompanion.CHECKLIST_MENU_TYPE, ItemChecklistScreen::new);
 	}
 

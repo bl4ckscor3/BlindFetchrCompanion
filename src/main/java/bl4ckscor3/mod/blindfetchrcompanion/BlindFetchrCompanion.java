@@ -45,6 +45,7 @@ public class BlindFetchrCompanion implements ModInitializer {
 	public static final String MODID = "blindfetchrcompanion";
 	public static final ExtendedScreenHandlerType<ItemChecklistMenu> CHECKLIST_MENU_TYPE = Registry.register(BuiltInRegistries.MENU, new ResourceLocation(MODID, "checklist"), new ExtendedScreenHandlerType<>((id, inv, buf) -> new ItemChecklistMenu(id, readItemStates(buf))));
 	public static final ResourceLocation OPEN_MENU_MESSAGE = new ResourceLocation(BlindFetchrCompanion.MODID, "open_menu");
+	public static final ResourceLocation UPDATE_ITEM_STATE = new ResourceLocation(BlindFetchrCompanion.MODID, "update_item_state");
 	private static final List<ItemStack> FETCHR_ITEMS = new ArrayList<>();
 	private static ChecklistsSavedData itemChecklists;
 	private static BlindFetchrCompanionConfig config;
