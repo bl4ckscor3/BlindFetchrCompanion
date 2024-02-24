@@ -4,7 +4,7 @@ A companion mod for [NeunEinser's Fetchr](https://github.com/NeunEinser/bingo/),
 
 ## Usage
 
-- This mod is made for Fabric and requires Fabric API.
+- This mod is made for Fabric and requires [Fabric API](https://modrinth.com/mod/fabric-api) as well as [Cloth Config](https://modrinth.com/mod/cloth-config).
 - Make sure that the mod is installed on the server and all clients for best results. More specifically:
 	- If the server has the mod installed, clients that don't have the mod installed won't be able to use the checklist.
 	- If the server does **not** have the mod installed, clients that *do* have it installed won't be able to open the checklist.
