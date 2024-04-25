@@ -1,4 +1,4 @@
-package bl4ckscor3.mod.blindfetchrcompanion;
+package bl4ckscor3.mod.blindfetchrcompanion.checklist;
 
 import java.util.List;
 

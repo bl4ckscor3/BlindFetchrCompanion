@@ -1,5 +1,6 @@
-package bl4ckscor3.mod.blindfetchrcompanion;
+package bl4ckscor3.mod.blindfetchrcompanion.network;
 
+import bl4ckscor3.mod.blindfetchrcompanion.BlindFetchrCompanion;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;

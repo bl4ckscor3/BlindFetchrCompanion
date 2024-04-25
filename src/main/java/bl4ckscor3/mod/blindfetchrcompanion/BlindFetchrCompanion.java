@@ -8,6 +8,11 @@ import java.util.List;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.builder.RequiredArgumentBuilder;
 
+import bl4ckscor3.mod.blindfetchrcompanion.checklist.ChecklistsSavedData;
+import bl4ckscor3.mod.blindfetchrcompanion.checklist.ItemChecklistMenu;
+import bl4ckscor3.mod.blindfetchrcompanion.checklist.ItemState;
+import bl4ckscor3.mod.blindfetchrcompanion.network.ClientboundUpdateItemStatePacket;
+import bl4ckscor3.mod.blindfetchrcompanion.network.ServerboundRequestToOpenMenuPacket;
 import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.serializer.JanksonConfigSerializer;
 import net.fabricmc.api.ModInitializer;

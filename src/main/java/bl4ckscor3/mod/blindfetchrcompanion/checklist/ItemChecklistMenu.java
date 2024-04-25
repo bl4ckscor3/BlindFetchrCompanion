@@ -1,7 +1,10 @@
-package bl4ckscor3.mod.blindfetchrcompanion;
+package bl4ckscor3.mod.blindfetchrcompanion.checklist;
 
 import java.util.List;
 
+import bl4ckscor3.mod.blindfetchrcompanion.BlindFetchrCompanion;
+import bl4ckscor3.mod.blindfetchrcompanion.BlindFetchrCompanionClient;
+import bl4ckscor3.mod.blindfetchrcompanion.network.ClientboundUpdateItemStatePacket;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;

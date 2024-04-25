@@ -1,8 +1,10 @@
-package bl4ckscor3.mod.blindfetchrcompanion;
+package bl4ckscor3.mod.blindfetchrcompanion.checklist;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.systems.RenderSystem;
 
+import bl4ckscor3.mod.blindfetchrcompanion.BlindFetchrCompanion;
+import bl4ckscor3.mod.blindfetchrcompanion.BlindFetchrCompanionClient;
 import bl4ckscor3.mod.blindfetchrcompanion.BlindFetchrCompanionConfig.CheckedItemDisplayType;
 import bl4ckscor3.mod.blindfetchrcompanion.mixin.KeyMappingAccessor;
 import net.minecraft.client.gui.GuiGraphics;
