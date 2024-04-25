@@ -1,10 +1,29 @@
 package bl4ckscor3.mod.blindfetchrcompanion;
 
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.FriendlyByteBuf;
+import java.util.List;
+
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+
+import net.minecraft.core.NonNullList;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.item.ItemStack;
 
 public final class ItemState {
+	//@formatter:off
+	public static final Codec<ItemState> CODEC = RecordCodecBuilder.create(
+			instance -> instance.group(
+					ItemStack.CODEC.fieldOf("stack").forGetter(ItemState::getStack),
+					Codec.BOOL.fieldOf("checked").forGetter(ItemState::isChecked))
+			.apply(instance, ItemState::new));
+	public static final StreamCodec<RegistryFriendlyByteBuf, ItemState> STREAM_CODEC = StreamCodec.composite(
+			ItemStack.STREAM_CODEC, ItemState::getStack,
+			ByteBufCodecs.BOOL, ItemState::isChecked,
+			ItemState::new);
+	//@formatter:on
+	public static final StreamCodec<RegistryFriendlyByteBuf, List<ItemState>> LIST_STREAM_CODEC = STREAM_CODEC.apply(ByteBufCodecs.collection(NonNullList::createWithCapacity));
 	private final ItemStack stack;
 	private boolean checked;
 
@@ -23,24 +42,5 @@ public final class ItemState {
 
 	public void setChecked(boolean checked) {
 		this.checked = checked;
-	}
-
-	public CompoundTag save(CompoundTag tag) {
-		tag.put("stack", stack.save(new CompoundTag()));
-		tag.putBoolean("checked", checked);
-		return tag;
-	}
-
-	public static ItemState load(CompoundTag tag) {
-		return new ItemState(ItemStack.of(tag.getCompound("stack")), tag.getBoolean("checked"));
-	}
-
-	public void write(FriendlyByteBuf buf) {
-		buf.writeItem(stack);
-		buf.writeBoolean(checked);
-	}
-
-	public static ItemState read(FriendlyByteBuf buf) {
-		return new ItemState(buf.readItem(), buf.readBoolean());
 	}
 }

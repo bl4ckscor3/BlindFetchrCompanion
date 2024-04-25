@@ -13,6 +13,7 @@ import me.shedaniel.autoconfig.serializer.JanksonConfigSerializer;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
+import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerType;
@@ -20,10 +21,11 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.arguments.TeamArgument;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload.Type;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
@@ -33,7 +35,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.alchemy.PotionUtils;
+import net.minecraft.world.item.alchemy.PotionContents;
 import net.minecraft.world.item.alchemy.Potions;
 import net.minecraft.world.item.armortrim.ArmorTrim;
 import net.minecraft.world.item.armortrim.TrimMaterials;
@@ -41,11 +43,21 @@ import net.minecraft.world.item.armortrim.TrimPatterns;
 import net.minecraft.world.level.saveddata.SavedData;
 import net.minecraft.world.scores.PlayerTeam;
 
+/* @formatter:off
+ * TODO:
+ * - Remove menu
+ * - Change screen to handle everything, but make server open the screen for the player
+ * 	- Keep track of players who have a screen open to minimize update packets
+ * 	- Send item states to client when opening the screen
+ * 	- Send single changes to the server which then sends it off to other players
+ * - Server-side config option for how items are displayed (categories, no categories, highlight categories when hovering)
+ * @formatter:on
+ */
 public class BlindFetchrCompanion implements ModInitializer {
 	public static final String MODID = "blindfetchrcompanion";
-	public static final ExtendedScreenHandlerType<ItemChecklistMenu> CHECKLIST_MENU_TYPE = Registry.register(BuiltInRegistries.MENU, new ResourceLocation(MODID, "checklist"), new ExtendedScreenHandlerType<>((id, inv, buf) -> new ItemChecklistMenu(id, readItemStates(buf))));
-	public static final ResourceLocation OPEN_MENU_MESSAGE = new ResourceLocation(BlindFetchrCompanion.MODID, "open_menu");
-	public static final ResourceLocation UPDATE_ITEM_STATE = new ResourceLocation(BlindFetchrCompanion.MODID, "update_item_state");
+	public static final ExtendedScreenHandlerType<ItemChecklistMenu, List<ItemState>> CHECKLIST_MENU_TYPE = Registry.register(BuiltInRegistries.MENU, new ResourceLocation(MODID, "checklist"), new ExtendedScreenHandlerType<>((id, inv, data) -> new ItemChecklistMenu(id, data), ItemState.LIST_STREAM_CODEC));
+	public static final Type<ServerboundRequestToOpenMenuPacket> REQUEST_TO_OPEN_MENU_MESSAGE = new Type<>(new ResourceLocation(MODID, "request_to_open_menu"));
+	public static final Type<ClientboundUpdateItemStatePacket> UPDATE_ITEM_STATE_MESSAGE = new Type<>(new ResourceLocation(MODID, "update_item_state"));
 	private static final List<ItemStack> FETCHR_ITEMS = new ArrayList<>();
 	private static ChecklistsSavedData itemChecklists;
 	private static BlindFetchrCompanionConfig config;
@@ -54,17 +66,21 @@ public class BlindFetchrCompanion implements ModInitializer {
 	public void onInitialize() {
 		AutoConfig.register(BlindFetchrCompanionConfig.class, JanksonConfigSerializer::new);
 		config = AutoConfig.getConfigHolder(BlindFetchrCompanionConfig.class).getConfig();
-		ServerPlayNetworking.registerGlobalReceiver(OPEN_MENU_MESSAGE, (server, player, handler, buf, responseSender) -> {
+		PayloadTypeRegistry.playS2C().register(UPDATE_ITEM_STATE_MESSAGE, ClientboundUpdateItemStatePacket.STREAM_CODEC);
+		PayloadTypeRegistry.playC2S().register(REQUEST_TO_OPEN_MENU_MESSAGE, ServerboundRequestToOpenMenuPacket.STREAM_CODEC);
+		ServerPlayNetworking.registerGlobalReceiver(BlindFetchrCompanion.REQUEST_TO_OPEN_MENU_MESSAGE, (packet, ctx) -> {
+			Player player = ctx.player();
+
 			if (!player.hasContainerOpen()) {
-				player.openMenu(new ExtendedScreenHandlerFactory() {
+				player.openMenu(new ExtendedScreenHandlerFactory<>() {
 					@Override
-					public void writeScreenOpeningData(ServerPlayer player, FriendlyByteBuf buf) {
-						writeItemStates(player.getScoreboard().getPlayersTeam(player.getName().getString()), buf);
+					public List<ItemState> getScreenOpeningData(ServerPlayer player) {
+						return getItemStates(player);
 					}
 
 					@Override
 					public AbstractContainerMenu createMenu(int id, Inventory inventory, Player player) {
-						return new ItemChecklistMenu(id, itemChecklists.getOrDefault(player.getScoreboard().getPlayersTeam(player.getName().getString())));
+						return new ItemChecklistMenu(id, getItemStates(player));
 					}
 
 					@Override
@@ -99,7 +115,7 @@ public class BlindFetchrCompanion implements ModInitializer {
 	}
 
 	public static void loadChecklists(MinecraftServer server) {
-		itemChecklists = server.overworld().getDataStorage().computeIfAbsent(new SavedData.Factory<>(ChecklistsSavedData::new, tag -> ChecklistsSavedData.load(server, tag), DataFixTypes.LEVEL), MODID);
+		itemChecklists = server.overworld().getDataStorage().computeIfAbsent(new SavedData.Factory<>(ChecklistsSavedData::new, (tag, lookupProvider) -> ChecklistsSavedData.load(server, tag, lookupProvider), DataFixTypes.LEVEL), MODID);
 
 		if (itemChecklists.isFirstLoad())
 			resetAllChecklists(server);
@@ -114,22 +130,8 @@ public class BlindFetchrCompanion implements ModInitializer {
 		itemChecklists.setDirty();
 	}
 
-	public static void writeItemStates(PlayerTeam team, FriendlyByteBuf buf) {
-		List<ItemState> itemStates = itemChecklists.getOrDefault(team);
-
-		buf.writeVarInt(itemStates.size());
-		itemStates.forEach(state -> state.write(buf));
-	}
-
-	public static List<ItemState> readItemStates(FriendlyByteBuf buf) {
-		List<ItemState> itemStates = new ArrayList<>();
-		int size = buf.readVarInt();
-
-		for (int i = 0; i < size; i++) {
-			itemStates.add(ItemState.read(buf));
-		}
-
-		return itemStates;
+	public static List<ItemState> getItemStates(Player player) {
+		return itemChecklists.getOrDefault(player.getScoreboard().getPlayersTeam(player.getName().getString()));
 	}
 
 	private static void resetAllChecklists(MinecraftServer server) {
@@ -152,12 +154,10 @@ public class BlindFetchrCompanion implements ModInitializer {
 	private static void populateFetchrItems(RegistryAccess registryAccess) {
 		try {
 			ItemStack leatherBoots = new ItemStack(Items.LEATHER_BOOTS);
-			ItemStack tippedArrow = new ItemStack(Items.TIPPED_ARROW);
+			ItemStack tippedArrow = PotionContents.createItemStack(Items.TIPPED_ARROW, Potions.SLOWNESS);
 
-			ArmorTrim.setTrim(registryAccess, leatherBoots, new ArmorTrim(registryAccess.lookup(Registries.TRIM_MATERIAL).get().get(TrimMaterials.LAPIS).get(), registryAccess.lookup(Registries.TRIM_PATTERN).get().get(TrimPatterns.SHAPER).get()));
-			PotionUtils.setPotion(tippedArrow, Potions.SLOWNESS);
-			FETCHR_ITEMS.addAll(Arrays.asList(
-		//@formatter:off
+			leatherBoots.set(DataComponents.TRIM, new ArmorTrim(registryAccess.lookup(Registries.TRIM_MATERIAL).get().get(TrimMaterials.LAPIS).get(), registryAccess.lookup(Registries.TRIM_PATTERN).get().get(TrimPatterns.SHAPER).get()));
+			FETCHR_ITEMS.addAll(Arrays.asList( //@formatter:off
 				new ItemStack(Items.ACACIA_HANGING_SIGN),
 				new ItemStack(Items.ACACIA_SAPLING),
 				new ItemStack(Items.ACTIVATOR_RAIL),
@@ -310,7 +310,7 @@ public class BlindFetchrCompanion implements ModInitializer {
 				new ItemStack(Items.TROPICAL_FISH_BUCKET),
 				new ItemStack(Items.VINE),
 				new ItemStack(Items.WRITABLE_BOOK)));
-		//@formatter:on
+			//@formatter:on
 			Collections.sort(FETCHR_ITEMS, (stack1, stack2) -> stack1.getDisplayName().getString().compareTo(stack2.getDisplayName().getString()));
 		}
 		catch (Exception e) {

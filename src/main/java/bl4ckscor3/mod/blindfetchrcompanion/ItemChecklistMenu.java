@@ -2,7 +2,6 @@ package bl4ckscor3.mod.blindfetchrcompanion;
 
 import java.util.List;
 
-import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
@@ -63,7 +62,7 @@ public class ItemChecklistMenu extends AbstractContainerMenu {
 						teamMember.sendSystemMessage(Component.translatable("blindfetchrcompanion." + (shouldBeChecked ? "item_checked" : "item_unchecked"), team.getColor() + name + ChatFormatting.RESET, Component.translatable(state.getStack().getDescriptionId())));
 
 						if (teamMember != player)
-							ServerPlayNetworking.send(teamMember, BlindFetchrCompanion.UPDATE_ITEM_STATE, PacketByteBufs.create().writeVarInt(slot).writeBoolean(shouldBeChecked));
+							ServerPlayNetworking.send(teamMember, new ClientboundUpdateItemStatePacket(slot, shouldBeChecked));
 					}
 				}
 			}
