@@ -60,9 +60,9 @@ import net.minecraft.world.scores.PlayerTeam;
  */
 public class BlindFetchrCompanion implements ModInitializer {
 	public static final String MODID = "blindfetchrcompanion";
-	public static final ExtendedScreenHandlerType<ItemChecklistMenu, List<ItemState>> CHECKLIST_MENU_TYPE = Registry.register(BuiltInRegistries.MENU, new ResourceLocation(MODID, "checklist"), new ExtendedScreenHandlerType<>((id, inv, data) -> new ItemChecklistMenu(id, data), ItemState.LIST_STREAM_CODEC));
-	public static final Type<ServerboundRequestToOpenMenuPacket> REQUEST_TO_OPEN_MENU_MESSAGE = new Type<>(new ResourceLocation(MODID, "request_to_open_menu"));
-	public static final Type<ClientboundUpdateItemStatePacket> UPDATE_ITEM_STATE_MESSAGE = new Type<>(new ResourceLocation(MODID, "update_item_state"));
+	public static final ExtendedScreenHandlerType<ItemChecklistMenu, List<ItemState>> CHECKLIST_MENU_TYPE = Registry.register(BuiltInRegistries.MENU, ResourceLocation.fromNamespaceAndPath(MODID, "checklist"), new ExtendedScreenHandlerType<>((id, inv, data) -> new ItemChecklistMenu(id, data), ItemState.LIST_STREAM_CODEC));
+	public static final Type<ServerboundRequestToOpenMenuPacket> REQUEST_TO_OPEN_MENU_MESSAGE = new Type<>(ResourceLocation.fromNamespaceAndPath(MODID, "request_to_open_menu"));
+	public static final Type<ClientboundUpdateItemStatePacket> UPDATE_ITEM_STATE_MESSAGE = new Type<>(ResourceLocation.fromNamespaceAndPath(MODID, "update_item_state"));
 	private static final List<ItemStack> FETCHR_ITEMS = new ArrayList<>();
 	private static ChecklistsSavedData itemChecklists;
 	private static BlindFetchrCompanionConfig config;

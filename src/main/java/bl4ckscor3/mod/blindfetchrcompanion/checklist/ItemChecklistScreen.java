@@ -15,8 +15,8 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.Slot;
 
 public class ItemChecklistScreen extends AbstractContainerScreen<ItemChecklistMenu> {
-	public static final ResourceLocation TEXTURE = new ResourceLocation(BlindFetchrCompanion.MODID, "gui/container/item_checklist.png");
-	public static final ResourceLocation CONFIRM_SPRITE = new ResourceLocation("container/beacon/confirm");
+	public static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(BlindFetchrCompanion.MODID, "gui/container/item_checklist.png");
+	public static final ResourceLocation CONFIRM_SPRITE = ResourceLocation.withDefaultNamespace("container/beacon/confirm");
 
 	public ItemChecklistScreen(ItemChecklistMenu menu, Inventory inventory, Component title) {
 		super(menu, inventory, title);
