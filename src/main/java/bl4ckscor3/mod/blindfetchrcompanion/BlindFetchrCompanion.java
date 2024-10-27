@@ -42,9 +42,9 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.alchemy.PotionContents;
 import net.minecraft.world.item.alchemy.Potions;
-import net.minecraft.world.item.armortrim.ArmorTrim;
-import net.minecraft.world.item.armortrim.TrimMaterials;
-import net.minecraft.world.item.armortrim.TrimPatterns;
+import net.minecraft.world.item.equipment.trim.ArmorTrim;
+import net.minecraft.world.item.equipment.trim.TrimMaterials;
+import net.minecraft.world.item.equipment.trim.TrimPatterns;
 import net.minecraft.world.level.saveddata.SavedData;
 import net.minecraft.world.scores.PlayerTeam;
 
@@ -258,7 +258,7 @@ public class BlindFetchrCompanion implements ModInitializer {
 				new ItemStack(Items.LEAD),
 				leatherBoots,
 				new ItemStack(Items.LECTERN),
-				//new ItemStack(Items.LIGHT_BLUE_BUNDLE),
+				new ItemStack(Items.LIGHT_BLUE_BUNDLE),
 				new ItemStack(Items.LIME_DYE),
 				new ItemStack(Items.MAGMA_BLOCK),
 				new ItemStack(Items.MANGROVE_PROPAGULE),

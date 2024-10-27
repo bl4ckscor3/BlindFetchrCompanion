@@ -62,7 +62,7 @@ public class ItemChecklistMenu extends AbstractContainerMenu {
 					ServerPlayer teamMember = playerList.getPlayerByName(teamMemberName);
 
 					if (teamMember != null) {
-						teamMember.sendSystemMessage(Component.translatable("blindfetchrcompanion." + (shouldBeChecked ? "item_checked" : "item_unchecked"), team.getColor() + name + ChatFormatting.RESET, Component.translatable(state.getStack().getDescriptionId())));
+						teamMember.sendSystemMessage(Component.translatable("blindfetchrcompanion." + (shouldBeChecked ? "item_checked" : "item_unchecked"), team.getColor() + name + ChatFormatting.RESET, state.getStack().getItemName()));
 
 						if (teamMember != player)
 							ServerPlayNetworking.send(teamMember, new ClientboundUpdateItemStatePacket(slot, shouldBeChecked));
