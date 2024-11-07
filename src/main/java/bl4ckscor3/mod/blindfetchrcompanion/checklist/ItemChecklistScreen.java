@@ -43,11 +43,8 @@ public class ItemChecklistScreen extends AbstractContainerScreen<ItemChecklistMe
 				if (displayType.darkens())
 					guiGraphics.fill(x, y, x + 16, y + 16, 0x80000000);
 
-				if (displayType.showsCheckmark()) {
-					RenderSystem.disableDepthTest();
-					guiGraphics.blitSprite(RenderType::guiTextured, CONFIRM_SPRITE, x, y - 2, 18, 18);
-					RenderSystem.enableDepthTest();
-				}
+				if (displayType.showsCheckmark())
+					guiGraphics.blitSprite(RenderType::guiTexturedOverlay, CONFIRM_SPRITE, x, y - 2, 18, 18);
 			}
 		}
 
