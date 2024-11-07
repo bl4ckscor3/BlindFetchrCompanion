@@ -159,7 +159,8 @@ public class BlindFetchrCompanion implements ModInitializer {
 	private static void populateFetchrItems(RegistryAccess registryAccess) {
 		try {
 			ItemStack leatherBoots = new ItemStack(Items.LEATHER_BOOTS);
-			ItemStack tippedArrow = PotionContents.createItemStack(Items.TIPPED_ARROW, Potions.SLOWNESS);
+			ItemStack arrowOfSlowness = PotionContents.createItemStack(Items.TIPPED_ARROW, Potions.SLOWNESS);
+			ItemStack arrowOfPoison = PotionContents.createItemStack(Items.TIPPED_ARROW, Potions.POISON);
 
 			leatherBoots.set(DataComponents.TRIM, new ArmorTrim(registryAccess.lookup(Registries.TRIM_MATERIAL).get().get(TrimMaterials.LAPIS).get(), registryAccess.lookup(Registries.TRIM_PATTERN).get().get(TrimPatterns.SHAPER).get()));
 			FETCHR_ITEMS.addAll(Arrays.asList( //@formatter:off
@@ -171,6 +172,8 @@ public class BlindFetchrCompanion implements ModInitializer {
 				new ItemStack(Items.APPLE),
 				new ItemStack(Items.ARMADILLO_SCUTE),
 				new ItemStack(Items.ARROW),
+				arrowOfSlowness,
+				arrowOfPoison,
 				new ItemStack(Items.AXOLOTL_BUCKET),
 				new ItemStack(Items.BAKED_POTATO),
 				new ItemStack(Items.BAMBOO),
@@ -309,7 +312,6 @@ public class BlindFetchrCompanion implements ModInitializer {
 				new ItemStack(Items.SUSPICIOUS_STEW),
 				new ItemStack(Items.SWEET_BERRIES),
 				new ItemStack(Items.TARGET),
-				tippedArrow,
 				new ItemStack(Items.TNT),
 				new ItemStack(Items.TNT_MINECART),
 				new ItemStack(Items.TUFF),

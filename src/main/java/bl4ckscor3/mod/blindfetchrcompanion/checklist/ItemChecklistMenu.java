@@ -23,7 +23,7 @@ import net.minecraft.world.scores.Team;
 
 public class ItemChecklistMenu extends AbstractContainerMenu {
 	public static final int NUM_COLUMNS = 13;
-	public static final int NUM_ROWS = 12;
+	public static final int NUM_ROWS = 13;
 	protected final List<ItemState> itemStates;
 
 	public ItemChecklistMenu(int id, List<ItemState> itemStates) {

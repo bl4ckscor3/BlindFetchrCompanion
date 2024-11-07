@@ -1,7 +1,6 @@
 package bl4ckscor3.mod.blindfetchrcompanion.checklist;
 
 import com.mojang.blaze3d.platform.InputConstants;
-import com.mojang.blaze3d.systems.RenderSystem;
 
 import bl4ckscor3.mod.blindfetchrcompanion.BlindFetchrCompanion;
 import bl4ckscor3.mod.blindfetchrcompanion.BlindFetchrCompanionClient;
@@ -22,13 +21,13 @@ public class ItemChecklistScreen extends AbstractContainerScreen<ItemChecklistMe
 	public ItemChecklistScreen(ItemChecklistMenu menu, Inventory inventory, Component title) {
 		super(menu, inventory, title);
 		imageWidth = 248;
-		imageHeight = 239;
+		imageHeight = 257;
 		inventoryLabelY = -100;
 	}
 
 	@Override
 	protected void renderBg(GuiGraphics guiGraphics, float partialTick, int mouseX, int mouseY) {
-		guiGraphics.blit(RenderType::guiTextured, TEXTURE, leftPos, topPos, 0, 0, imageWidth, imageHeight, 256, 256);
+		guiGraphics.blit(RenderType::guiTextured, TEXTURE, leftPos, topPos, 0, 0, imageWidth, imageHeight, 257, 257);
 	}
 
 	@Override
